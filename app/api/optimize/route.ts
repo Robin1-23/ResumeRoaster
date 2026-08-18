@@ -8,14 +8,16 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const { resumeText, jd } = await req.json();
+    const { resumeText, jd, targetPageCount } = await req.json();
 
     if (!resumeText) {
       return NextResponse.json({ error: "No resume text provided." }, { status: 400 });
     }
 
+    const targetPages = targetPageCount || 1;
+
     // Server-side cache check to prevent redundant AI API token usage
-    const cacheKey = generateCacheKey(resumeText, jd);
+    const cacheKey = generateCacheKey(resumeText, jd + "_pages_" + targetPages);
     const cached = getCachedResponse(cacheKey);
     if (cached) {
       console.log("Serving /api/optimize from memory cache.");
@@ -48,9 +50,14 @@ ${cleanedResume}
 Job Description:
 ${cleanedJd}
 
+Target Page Constraint:
+This resume MUST fit exactly within ${targetPages} page(s). 
+If the target is ${targetPages} page(s), you MUST write highly concise, condensed, and to-the-point bullet points and summaries. Make sure that the total length of experiences and projects is short enough to naturally fit within a ${targetPages}-page limit without any overflow or page bleed.
+
 Instructions:
 1. Optimize the experiences, bullet points, projects, and skills to integrate missing keywords from the JD and swap passive verbs with active verbs.
-2. Return a JSON object matching this exact JSON schema:
+2. Keep bullet points short, high-impact, and metrics-focused. Limit each experience to 2-3 concise bullet points.
+3. Return a JSON object matching this exact JSON schema:
 ${RESUME_JSON_SCHEMA_DESCRIPTION}
 
 Ensure the output is valid JSON. Return ONLY the raw JSON string. Do NOT wrap it in markdown code blocks like \`\`\`json.

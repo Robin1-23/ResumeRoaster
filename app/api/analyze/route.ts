@@ -95,6 +95,7 @@ export async function POST(req: NextRequest) {
       console.log("Serving /api/analyze from memory cache.");
       return NextResponse.json({
         originalText: text,
+        pageCount: data.numpages || 1,
         score: cached.score,
         missingKeywords: cached.missingKeywords || [],
         suggestions: cached.suggestions || [],
@@ -256,6 +257,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       originalText: text,
+      pageCount: data.numpages || 1,
       score: parsedData.score,
       missingKeywords: parsedData.missingKeywords || [],
       suggestions: parsedData.suggestions || [],

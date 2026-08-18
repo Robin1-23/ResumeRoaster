@@ -160,6 +160,7 @@ export default function Home() {
 
   const [makerTab, setMakerTab] = useState<"upload" | "edit">("upload");
   const [activeFormSec, setActiveFormSec] = useState<string>("contact");
+  const [originalPageCount, setOriginalPageCount] = useState<number>(1);
 
   // Layout Tuning Sliders States
   const [fontSize, setFontSize] = useState<number>(10);
@@ -488,6 +489,7 @@ export default function Home() {
       }
 
       setAnalysis(data as AIAnalysis);
+      setOriginalPageCount(data.pageCount || 1);
       setStaleResult(false);
       setLoading(false);
     } catch (err) {
@@ -510,7 +512,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           resumeText: analysis.originalText,
-          jd: jd
+          jd: jd,
+          targetPageCount: originalPageCount
         })
       });
 
