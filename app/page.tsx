@@ -161,6 +161,7 @@ export default function Home() {
   const [makerTab, setMakerTab] = useState<"upload" | "edit">("upload");
   const [activeFormSec, setActiveFormSec] = useState<string>("contact");
   const [originalPageCount, setOriginalPageCount] = useState<number>(1);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   // Layout Tuning Sliders States
   const [fontSize, setFontSize] = useState<number>(10);
@@ -183,6 +184,7 @@ export default function Home() {
   // Resize handler to calculate desktop sheet scale and scroll height
   useEffect(() => {
     const handleResize = () => {
+      setIsMobile(window.innerWidth <= 640);
       const doc = document.getElementById("optimized-resume-doc");
       if (doc) {
         setSheetHeight(doc.scrollHeight);
@@ -681,8 +683,8 @@ export default function Home() {
           <WarpText
             text="YOUR RESUME IS COOKED.LET'S FIX IT."
             color="#fff7e8"
-            fontSize="clamp(32px, 4.5vw, 64px)"
-            fontWeight={700}
+            fontSize={isMobile ? "42px" : "clamp(32px, 4.5vw, 64px)"}
+            fontWeight={isMobile ? 900 : 700}
             fontFamily="Oswald"
             letterSpacing="-0.01em"
             lineHeight={0.98}
@@ -692,7 +694,7 @@ export default function Home() {
             pointerInfluence={0.35}
             pointerStrength={0.3}
             refraction={0.012}
-            style={{ height: "140px", marginBottom: "8px" }}
+            style={{ height: isMobile ? "110px" : "140px", marginBottom: "8px" }}
           />
           <p className="hero-sub">
             Built for students from 50+ countries who don't have Stanford on their resume.
