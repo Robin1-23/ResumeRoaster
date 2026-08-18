@@ -57,13 +57,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ResumeRoaster — Free AI Resume Builder & ATS Checker",
     description: "Analyze your resume score, compare skill gaps with job descriptions, and write high-impact STAR accomplishments.",
-    url: "https://resumeroaster.com",
+    url: "https://resume-roaster.pro",
     siteName: "ResumeRoaster",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "https://resumeroaster.com/icon.jpg",
+        url: "https://resume-roaster.pro/icon.jpg",
         width: 1200,
         height: 630,
         alt: "ResumeRoaster - Free AI Resume Builder & ATS Checker"
@@ -75,10 +75,10 @@ export const metadata: Metadata = {
     title: "ResumeRoaster — Free AI Resume Builder",
     description: "Optimize your resume score and download clean, parser-safe A4 PDF templates in seconds.",
     creator: "@resumeroaster",
-    images: ["https://resumeroaster.com/icon.jpg"]
+    images: ["https://resume-roaster.pro/icon.jpg"]
   },
   alternates: {
-    canonical: "https://resumeroaster.com"
+    canonical: "https://resume-roaster.pro"
   }
 };
 
@@ -98,15 +98,15 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebApplication",
               "name": "ResumeRoaster",
-              "url": "https://resumeroaster.com",
+              "url": "https://resume-roaster.pro",
               "description": "Free AI-powered resume builder and ATS scanner. Optimize keyword density, polish bullet points with the STAR method, and export parser-safe PDF templates.",
               "applicationCategory": "EducationalApplication, BusinessApplication",
               "operatingSystem": "All",
-              "screenshot": "https://resumeroaster.com/icon.jpg",
+              "screenshot": "https://resume-roaster.pro/icon.jpg",
               "author": {
                 "@type": "Organization",
                 "name": "ResumeRoaster",
-                "url": "https://resumeroaster.com"
+                "url": "https://resume-roaster.pro"
               },
               "aggregateRating": {
                 "@type": "AggregateRating",
@@ -139,7 +139,7 @@ export default function RootLayout({
                   "@type": "ListItem",
                   "position": 1,
                   "name": "Free AI Resume Builder",
-                  "item": "https://resumeroaster.com"
+                  "item": "https://resume-roaster.pro"
                 }
               ]
             })
