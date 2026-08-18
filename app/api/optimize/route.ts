@@ -52,11 +52,14 @@ ${cleanedJd}
 
 Target Page Constraint:
 This resume MUST fit exactly within ${targetPages} page(s). 
-If the target is ${targetPages} page(s), you MUST write highly concise, condensed, and to-the-point bullet points and summaries. Make sure that the total length of experiences and projects is short enough to naturally fit within a ${targetPages}-page limit without any overflow or page bleed.
+Your objective is to write the optimal amount of content to fill the ${targetPages} page(s) beautifully and professionally.
+- Do NOT make the text too short or leave the resume looking empty with excessive whitespace. Keep the resume looking rich, professional, and well-filled.
+- Balance the content: keep bullet points high-impact, metrics-focused, and detailed (ideally 3-4 bullet points per major experience), but prune or condense the sentences slightly so that they do not bleed or overflow onto page ${targetPages + 1}.
+- Make sure that the combined text length of all sections (summary, experiences, projects, skills, education) is tailored to fit the page budget nicely without any extra trailing page.
 
 Instructions:
 1. Optimize the experiences, bullet points, projects, and skills to integrate missing keywords from the JD and swap passive verbs with active verbs.
-2. Keep bullet points short, high-impact, and metrics-focused. Limit each experience to 2-3 concise bullet points.
+2. Ensure every experience has robust, action-oriented bullet points containing metrics and achievements.
 3. Return a JSON object matching this exact JSON schema:
 ${RESUME_JSON_SCHEMA_DESCRIPTION}
 
