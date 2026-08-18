@@ -90,6 +90,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${oswald.variable} ${courierPrime.variable} ${inter.variable}`}>
       <head>
+        <meta name="google-site-verification" content="YusRD1nslTUjBp07W4Ai1Ax19DtqHqLTkUs0wZmytaE" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
