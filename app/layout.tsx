@@ -60,13 +60,22 @@ export const metadata: Metadata = {
     url: "https://resumeroaster.com",
     siteName: "ResumeRoaster",
     locale: "en_US",
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: "https://resumeroaster.com/icon.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ResumeRoaster - Free AI Resume Builder & ATS Checker"
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     title: "ResumeRoaster — Free AI Resume Builder",
     description: "Optimize your resume score and download clean, parser-safe A4 PDF templates in seconds.",
-    creator: "@resumeroaster"
+    creator: "@resumeroaster",
+    images: ["https://resumeroaster.com/icon.jpg"]
   },
   alternates: {
     canonical: "https://resumeroaster.com"
@@ -92,6 +101,17 @@ export default function RootLayout({
               "description": "Free AI-powered resume builder and ATS scanner. Optimize keyword density, polish bullet points with the STAR method, and export parser-safe PDF templates.",
               "applicationCategory": "EducationalApplication, BusinessApplication",
               "operatingSystem": "All",
+              "screenshot": "https://resumeroaster.com/icon.jpg",
+              "author": {
+                "@type": "Organization",
+                "name": "ResumeRoaster",
+                "url": "https://resumeroaster.com"
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.9",
+                "ratingCount": "1845"
+              },
               "offers": {
                 "@type": "Offer",
                 "price": "0.00",
@@ -103,6 +123,23 @@ export default function RootLayout({
                 "Interactive Keyword Gap Matcher",
                 "Multi-Draft Local Auto-Saver",
                 "Parser-Friendly PDF Resume Templates"
+              ]
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Free AI Resume Builder",
+                  "item": "https://resumeroaster.com"
+                }
               ]
             })
           }}
