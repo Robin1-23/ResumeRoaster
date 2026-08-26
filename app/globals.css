@@ -2256,4 +2256,95 @@ footer {
   }
 }
 
+/* --- SECTION IMPACT DIAGNOSTICS & SCORE COSTS --- */
+
+.cost-panel-wrapper {
+  background: var(--char-2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.cost-bar-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cost-bar-container {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  display: flex;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.cost-bar-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.cost-segment-summary { background: #ff5a1f; }
+.cost-segment-experience { background: #c4341f; }
+.cost-segment-projects { background: #f4b942; }
+.cost-segment-skills { background: #ff8b5c; }
+.cost-segment-consistency { background: #a78bfa; }
+
+.cost-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cost-item-card {
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cost-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cost-section-name {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--paper);
+}
+
+.cost-badge {
+  font-size: 10.5px;
+  font-weight: bold;
+  font-family: monospace;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.cost-badge.needs-work {
+  color: var(--burnt);
+  background: rgba(196, 52, 31, 0.15);
+  border: 1px solid rgba(196, 52, 31, 0.2);
+}
+
+.cost-badge.passed {
+  color: var(--herb);
+  background: rgba(122, 155, 87, 0.15);
+  border: 1px solid rgba(122, 155, 87, 0.2);
+}
+
+.cost-reason-text {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--paper-dim);
+}
+
 

@@ -10,6 +10,7 @@ const ConsistencyChecker = dynamic(() => import("@/components/ConsistencyChecker
 const HumanReviewWidget = dynamic(() => import("@/components/HumanReviewWidget"), { ssr: false });
 import type { JobApplication } from "@/components/OutcomeTracker";
 import { detectHonestyGaps, detectHonestyGapsRaw } from "@/lib/honesty-checker";
+import { evaluateSectionDiagnostics, evaluateSectionDiagnosticsRaw } from "@/lib/section-diagnostics";
 import {
   TEMPLATE_DEFINITIONS,
   TEMPLATE_COMPONENTS,
@@ -1547,6 +1548,69 @@ export default function Home() {
                   </div>
                   <p className="score-desc">Targeting a score above 85 to pass automated filters.</p>
                 </div>
+
+                {/* Section-level Diagnostics & Score Costs */}
+                {(() => {
+                  const honestyIssues = resumeData 
+                    ? detectHonestyGaps(resumeData) 
+                    : (analysis?.originalText ? detectHonestyGapsRaw(analysis.originalText) : []);
+                  
+                  const audits = resumeData
+                    ? evaluateSectionDiagnostics(resumeData, honestyIssues.length, 0)
+                    : (analysis?.originalText ? evaluateSectionDiagnosticsRaw(analysis.originalText) : []);
+
+                  const totalLost = audits.reduce((sum, item) => sum + item.cost, 0);
+
+                  return (
+                    <div className="cost-panel-wrapper">
+                      <div className="cost-bar-title-row">
+                        <span style={{ fontSize: "11px", color: "var(--butter)", fontFamily: "Oswald", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.05em" }}>
+                          📉 Section Score Costs
+                        </span>
+                        <span style={{ fontSize: "11px", color: totalLost > 0 ? "var(--burnt)" : "var(--herb)", fontWeight: "bold" }}>
+                          {totalLost > 0 ? `−${totalLost}% Total Cost` : "Perfect Score Structure"}
+                        </span>
+                      </div>
+
+                      {totalLost > 0 && (
+                        <div className="cost-bar-container">
+                          {audits.map((item, idx) => {
+                            if (item.cost === 0) return null;
+                            const segmentClass = item.section.toLowerCase().includes("summary") ? "summary"
+                              : item.section.toLowerCase().includes("experience") ? "experience"
+                              : item.section.toLowerCase().includes("project") ? "projects"
+                              : item.section.toLowerCase().includes("skill") ? "skills"
+                              : "consistency";
+                            return (
+                              <div 
+                                key={idx}
+                                className={`cost-bar-segment cost-segment-${segmentClass}`}
+                                style={{ width: `${(item.cost / totalLost) * 100}%` }}
+                                title={`${item.section}: -${item.cost}%`}
+                              />
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      <div className="cost-items-list">
+                        {audits.map((item, idx) => (
+                          <div key={idx} className="cost-item-card">
+                            <div className="cost-item-header">
+                              <span className="cost-section-name">{item.section}</span>
+                              <span className={`cost-badge ${item.status}`}>
+                                {item.status === "passed" ? "✓ OK" : `−${item.cost}%`}
+                              </span>
+                            </div>
+                            <p className="cost-reason-text" style={{ margin: 0 }}>
+                              {item.reason}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Honesty Roast / Lie Detector section */}
                 {(() => {
