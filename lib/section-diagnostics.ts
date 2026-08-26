@@ -105,7 +105,7 @@ export function evaluateSectionDiagnostics(
   }
 
   // 3. Projects Section Audit
-  if (!resumeData.projects || resumeData.projects.length === 0) {
+  if (!resumeData.projects || !Array.isArray(resumeData.projects) || resumeData.projects.length === 0) {
     audits.push({
       section: "Projects",
       status: "needs-work",
@@ -114,8 +114,8 @@ export function evaluateSectionDiagnostics(
     });
   } else {
     let emptyBullets = false;
-    resumeData.projects.forEach(p => {
-      if (p.bullets.length === 0 || (p.bullets.length === 1 && !p.bullets[0].trim())) {
+    (resumeData.projects || []).forEach(p => {
+      if (!p.bullets || !Array.isArray(p.bullets) || p.bullets.length === 0 || (p.bullets.length === 1 && !p.bullets[0]?.trim())) {
         emptyBullets = true;
       }
     });

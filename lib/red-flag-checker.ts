@@ -60,13 +60,12 @@ export function auditRedFlags(resumeData: ResumeData | null, rawText: string | n
   let datesPassed = true;
   let dateMessage = "All experience entries include dates.";
   if (resumeData) {
-    const missingDateEntries = resumeData.experience.filter(exp => !exp.dates?.trim());
+    const missingDateEntries = (resumeData.experience || []).filter(exp => !exp.dates?.trim());
     if (missingDateEntries.length > 0) {
       datesPassed = false;
       dateMessage = `Missing dates in experience: "${missingDateEntries.map(e => e.organization).join(", ")}". Employment dates are mandatory for background verification.`;
     }
   } else if (rawText) {
-    // Basic search check: find lines without numeric years
     const lines = rawText.split("\n");
     const experienceLineIdx = lines.findIndex(l => /experience|employment|history/i.test(l));
     if (experienceLineIdx !== -1) {
@@ -91,11 +90,11 @@ export function auditRedFlags(resumeData: ResumeData | null, rawText: string | n
   if (resumeData) {
     let passiveCount = 0;
     let totalBullets = 0;
-    resumeData.experience.forEach(exp => {
-      exp.bullets.forEach(b => {
+    (resumeData.experience || []).forEach(exp => {
+      (exp.bullets || []).forEach(b => {
         totalBullets++;
         const words = b.toLowerCase().split(/\s+/);
-        if (PASSIVE_WORDS.includes(words[0])) {
+        if (words[0] && PASSIVE_WORDS.includes(words[0])) {
           passiveCount++;
         }
       });
@@ -121,10 +120,10 @@ export function auditRedFlags(resumeData: ResumeData | null, rawText: string | n
   let actionMessage = "No pronoun/article starters found. Bullets begin with direct tech verbs.";
   if (resumeData) {
     const invalidBullets: string[] = [];
-    resumeData.experience.forEach(exp => {
-      exp.bullets.forEach(b => {
+    (resumeData.experience || []).forEach(exp => {
+      (exp.bullets || []).forEach(b => {
         const firstWord = b.trim().toLowerCase().split(/\s+/)[0];
-        if (PRONOUNS.includes(firstWord)) {
+        if (firstWord && PRONOUNS.includes(firstWord)) {
           invalidBullets.push(b);
         }
       });
@@ -147,15 +146,15 @@ export function auditRedFlags(resumeData: ResumeData | null, rawText: string | n
   let tenseMessage = "Tense matches job timelines (past jobs use past-tense verbs).";
   if (resumeData) {
     const mismatchedCompanies: string[] = [];
-    resumeData.experience.forEach(exp => {
+    (resumeData.experience || []).forEach(exp => {
       const isPastJob = exp.dates && 
                         exp.dates.toLowerCase().includes("20") && 
                         !exp.dates.toLowerCase().includes("present") && 
                         !exp.dates.toLowerCase().includes("current");
       if (isPastJob) {
-        exp.bullets.forEach(b => {
+        (exp.bullets || []).forEach(b => {
           const firstWord = b.trim().toLowerCase().split(/\s+/)[0];
-          if (PRESENT_TENSE_VERBS.includes(firstWord)) {
+          if (firstWord && PRESENT_TENSE_VERBS.includes(firstWord)) {
             mismatchedCompanies.push(exp.organization);
           }
         });

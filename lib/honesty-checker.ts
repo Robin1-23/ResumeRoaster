@@ -60,9 +60,9 @@ export function detectHonestyGaps(resumeData: ResumeData): HonestyIssue[] {
 
   // Construct a search corpus of everything outside the skills section
   const contactText = resumeData.contact.links?.join(" ") || "";
-  const expText = resumeData.experience.map(e => `${e.organization} ${e.role} ${e.dates} ${e.bullets.join(" ")}`).join(" ");
-  const projText = resumeData.projects?.map(p => `${p.name} ${p.dates} ${p.bullets.join(" ")}`).join(" ") || "";
-  const eduText = resumeData.education.map(e => `${e.school} ${e.degree} ${e.dates} ${e.details?.join(" ") || ""}`).join(" ");
+  const expText = resumeData.experience.map(e => `${e.organization} ${e.role} ${e.dates || ""} ${e.bullets.join(" ")}`).join(" ");
+  const projText = resumeData.projects?.map(p => `${p.name} ${p.dates || ""} ${p.bullets.join(" ")}`).join(" ") || "";
+  const eduText = resumeData.education.map(e => `${e.school} ${e.degree} ${e.dates || ""} ${e.details?.join(" ") || ""}`).join(" ");
   const summaryText = resumeData.summary || "";
   const certsText = resumeData.certifications?.join(" ") || "";
 
