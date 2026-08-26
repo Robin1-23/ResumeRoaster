@@ -12,7 +12,6 @@ export default function CompactTemplate({ data, customStyles }: ResumeTemplatePr
     page: {
       width: "100%",
       minHeight: "297mm",
-      height: "297mm",
       background: "transparent",
       color: "#000000",
       fontFamily: "'Helvetica Neue', Arial, sans-serif",

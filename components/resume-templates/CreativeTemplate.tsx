@@ -12,7 +12,6 @@ export default function CreativeTemplate({ data, customStyles }: ResumeTemplateP
     page: {
       width: "100%",
       minHeight: "297mm",
-      height: "297mm",
       background: "transparent",
       color: "#000000",
       fontFamily: "'Inter', system-ui, sans-serif",

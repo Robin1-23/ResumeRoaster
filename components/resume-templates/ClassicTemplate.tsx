@@ -12,7 +12,6 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
     page: {
       width: "100%",
       minHeight: "297mm",
-      height: "297mm",
       background: "transparent",
       color: "#000000",
       fontFamily: "'Georgia', 'Times New Roman', serif",

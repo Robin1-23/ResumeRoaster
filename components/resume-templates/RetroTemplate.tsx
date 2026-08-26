@@ -12,7 +12,6 @@ export default function RetroTemplate({ data, customStyles }: ResumeTemplateProp
     page: {
       width: "100%",
       minHeight: "297mm",
-      height: "297mm",
       background: "transparent",
       color: accentColor,
       fontFamily: "'Courier New', Courier, monospace",

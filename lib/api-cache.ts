@@ -4,7 +4,7 @@
  */
 
 const cache = new Map<string, { data: any; expiry: number }>();
-const CACHE_TTL_MS = 30 * 60 * 1000; // Cache results for 30 minutes
+const CACHE_TTL_MS = 2 * 60 * 1000; // Cache results for 2 minutes (short to allow re-optimizations to pick up prompt changes)
 const MAX_CACHE_SIZE = 1000; // Limit cache entries to prevent memory exhaustion
 
 export function getCachedResponse(key: string): any | null {

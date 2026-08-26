@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     const prompt = `
 You are an expert professional resume writer. Re-write the following resume text to align with the provided Job Description (JD).
-Your goal is to optimize the resume so that it achieves an ATS match score close to 100.
+Your goal is to optimize the resume to achieve a high ATS match score while fitting EXACTLY in ${targetPages} page(s) of A4.
 
 Resume Text:
 ${cleanedResume}
@@ -55,22 +55,26 @@ ${cleanedResume}
 Job Description:
 ${cleanedJd}
 
-Target Page Constraint:
-This resume MUST fill exactly ${targetPages} page(s) of A4 paper — NO empty white space at the bottom.
-CRITICAL FILLING RULES:
-- Add 3-5 strong, quantified, action-verb-led bullet points for EVERY experience entry. Never fewer than 3.
-- Add 2-3 bullets per project. If no projects exist, infer 1-2 from the experience (side projects, internal tools, automations).
-- Add a 2-3 sentence professional summary if missing.
-- Expand the skills section: group skills into 3-5 named categories (Languages, Frameworks, Tools, Soft Skills, etc.) each with 4-8 items.
-- If the person has certifications or awards mentioned anywhere, include a Certifications section.
-- For education entries, add GPA, relevant coursework, or academic achievements in the "details" array.
-- The resume should look RICH, FULL, and PROFESSIONAL — not sparse or skeleton-like. Every section must be substantive.
-- Do NOT add fabricated companies or roles. Expand on what is real with more specific, detailed bullets.
-- Balance the content: make bullet points high-impact, metrics-focused, and detailed, but prune slightly if needed to avoid overflow.
+STRICT SINGLE-PAGE RULES — follow these precisely to avoid overflow AND avoid empty space:
+
+CONTENT DENSITY TARGETS (for a 1-page resume at ~10pt font):
+- Professional Summary: 2-3 sentences, max 60 words total. Be concise.
+- Experience bullets: EXACTLY 3 bullets per role. Each bullet max 20 words. Start with a strong past-tense action verb. Include 1 metric per bullet.
+- Projects: EXACTLY 2 bullets per project, each max 18 words.
+- Skills: 2-3 skill groups, each with 5-7 skills listed inline (comma-separated). Do NOT use multiple lines per group.
+- Education: degree name, school, and dates only. Add at most 1 detail line (GPA or relevant coursework) if space allows.
+- Certifications: list only if the candidate actually has them, max 2 lines.
+
+LAYOUT PRINCIPLES:
+- Less is more. Crisp, tight bullets > long paragraphs.
+- Every bullet must be impactful, metric-driven, and directly relevant to the JD.
+- Do NOT add fabricated companies, roles, or experiences.
+- Prefer shorter, punchy bullets over longer descriptive ones to stay within the page.
+- The total word count of all sections combined must not exceed 450 words.
 
 Instructions:
-1. Optimize experiences, bullet points, projects, and skills to integrate missing keywords from the JD and swap passive verbs with active verbs.
-2. Ensure every experience has robust, action-oriented bullet points containing metrics and achievements.
+1. Optimize experiences, bullet points, projects, and skills to integrate missing keywords from the JD.
+2. Swap all passive verbs with strong action verbs (Led, Built, Engineered, Reduced, Grew, Deployed).
 3. Return a JSON object matching this exact JSON schema:
 ${RESUME_JSON_SCHEMA_DESCRIPTION}
 

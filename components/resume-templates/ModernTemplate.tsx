@@ -12,7 +12,6 @@ export default function ModernTemplate({ data, customStyles }: ResumeTemplatePro
     page: {
       width: "100%",
       minHeight: "297mm",
-      height: "297mm",
       display: "flex",
       background: "transparent",
       color: "#000000",
