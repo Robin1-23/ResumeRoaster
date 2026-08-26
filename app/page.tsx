@@ -288,15 +288,13 @@ export default function Home() {
         setSheetHeight(doc.scrollHeight);
       }
 
-      if (window.innerWidth >= 1025) {
-        const wrapper = document.querySelector(".resume-sheet-wrapper");
-        if (wrapper) {
-          const width = wrapper.clientWidth;
-          if (width > 40) {
-            // A4 sheet width is ~794px in standard CSS dimensions, subtracting 40px wrapper padding
-            const scale = (width - 40) / 794;
-            setSheetScale(scale < 1 ? scale : 1);
-          }
+      const wrapper = document.querySelector(".resume-sheet-wrapper");
+      if (wrapper) {
+        const width = wrapper.clientWidth;
+        if (width > 40) {
+          // A4 sheet width is ~794px in standard CSS dimensions, subtracting 40px wrapper padding
+          const scale = (width - 40) / 794;
+          setSheetScale(scale < 1 ? scale : 1);
         }
       } else {
         setSheetScale(1);
