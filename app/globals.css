@@ -2032,43 +2032,62 @@ footer {
 .page-navigation-tabs {
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 8px;
   margin: -15px auto 40px auto;
-  max-width: 600px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 4px;
+  max-width: 680px;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  padding: 6px;
+  backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
 }
 
 .page-nav-btn {
   background: transparent;
   color: var(--ash);
-  border: none;
-  padding: 10px 24px;
+  border: 1px solid transparent;
+  padding: 10px 20px;
   font-family: "Oswald", sans-serif;
-  font-size: 14px;
+  font-size: 11.5px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 6px;
+  letter-spacing: 0.1em;
+  border-radius: 99px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.page-nav-btn .tab-icon {
+  transition: transform 0.3s ease, stroke 0.3s ease;
+  stroke: var(--ash);
 }
 
 .page-nav-btn:hover {
   color: var(--paper);
-  background: rgba(255, 255, 255, 0.04);
+}
+
+.page-nav-btn:hover .tab-icon {
+  stroke: var(--paper);
+  transform: translateY(-1px);
 }
 
 .page-nav-btn.active {
-  background: var(--flame);
-  color: var(--char);
+  background: rgba(255, 90, 31, 0.06);
+  border: 1px solid rgba(255, 90, 31, 0.25);
+  color: var(--paper);
   font-weight: 700;
+  box-shadow: 0 0 15px rgba(255, 90, 31, 0.12), inset 0 0 6px rgba(255, 90, 31, 0.05);
+}
+
+.page-nav-btn.active .tab-icon {
+  stroke: var(--flame);
+  transform: scale(1.05);
 }
 
 /* --- CROSS-PLATFORM CONSISTENCY SCANNER STYLING --- */
