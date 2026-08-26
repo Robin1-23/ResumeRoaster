@@ -2071,4 +2071,71 @@ footer {
   font-weight: 700;
 }
 
+/* --- CROSS-PLATFORM CONSISTENCY SCANNER STYLING --- */
+
+.consistency-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 10px;
+}
+
+.scan-progress-box {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.scan-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Courier Prime", monospace;
+  font-size: 13px;
+}
+
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.step-dot.status-pending {
+  background: var(--char-dim);
+  box-shadow: none;
+}
+
+.step-dot.status-running {
+  background: var(--flame);
+  box-shadow: 0 0 8px var(--flame);
+  animation: pulse-glow 1.2s infinite ease-in-out;
+}
+
+.step-dot.status-done {
+  background: var(--herb);
+  box-shadow: 0 0 6px var(--herb);
+}
+
+.step-dot.status-error {
+  background: var(--burnt);
+  box-shadow: 0 0 6px var(--burnt);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
 

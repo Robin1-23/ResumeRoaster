@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 const WarpText = dynamic(() => import("@/components/WarpText"), { ssr: false });
 const SplashCursor = dynamic(() => import("@/components/SplashCursor"), { ssr: false });
 const OutcomeTracker = dynamic(() => import("@/components/OutcomeTracker"), { ssr: false });
+const ConsistencyChecker = dynamic(() => import("@/components/ConsistencyChecker"), { ssr: false });
 import type { JobApplication } from "@/components/OutcomeTracker";
 import {
   TEMPLATE_DEFINITIONS,
@@ -176,7 +177,7 @@ export default function Home() {
   const [selectedDraftName, setSelectedDraftName] = useState<string>("Default Draft");
 
   // Outcome Tracker States
-  const [activePageTab, setActivePageTab] = useState<"optimizer" | "tracker">("optimizer");
+  const [activePageTab, setActivePageTab] = useState<"optimizer" | "tracker" | "consistency">("optimizer");
   const [applications, setApplications] = useState<JobApplication[]>([]);
 
   // Dynamic scale state to fit Column 3 fully without scrolling on desktop
@@ -270,6 +271,19 @@ export default function Home() {
     const updated = applications.filter(a => a.id !== id);
     setApplications(updated);
     localStorage.setItem("resumeroaster_applications", JSON.stringify(updated));
+  };
+
+  const getResumeTextForAudit = () => {
+    if (analysis?.originalText) return analysis.originalText;
+    if (resumeData) {
+      const contactText = `${resumeData.contact.name || ""} ${resumeData.contact.email || ""} ${resumeData.contact.phone || ""} ${resumeData.contact.links?.join(" ") || ""}`;
+      const expText = resumeData.experience.map(e => `${e.organization} ${e.role} ${e.dates} ${e.bullets.join(" ")}`).join(" ");
+      const projText = resumeData.projects?.map(p => `${p.name} ${p.dates} ${p.bullets.join(" ")}`).join(" ") || "";
+      const eduText = resumeData.education.map(e => `${e.school} ${e.degree} ${e.dates} ${e.details?.join(" ") || ""}`).join(" ");
+      const skillText = resumeData.skills.map(s => `${s.category} ${s.items.join(" ")}`).join(" ");
+      return `${contactText}\n${expText}\n${projText}\n${eduText}\n${skillText}`;
+    }
+    return "";
   };
 
   const saveDraft = (name: string, dataToSave: ResumeData) => {
@@ -752,6 +766,13 @@ export default function Home() {
             onClick={() => setActivePageTab("tracker")}
           >
             📊 Outcome Tracker
+          </button>
+          <button 
+            type="button" 
+            className={`page-nav-btn ${activePageTab === "consistency" ? "active" : ""}`}
+            onClick={() => setActivePageTab("consistency")}
+          >
+            🔍 Consistency Scorer
           </button>
         </div>
 
@@ -1608,7 +1629,7 @@ export default function Home() {
           </div>
         </div>
         </>
-        ) : (
+        ) : activePageTab === "tracker" ? (
           <OutcomeTracker 
             drafts={drafts}
             applications={applications}
@@ -1617,6 +1638,10 @@ export default function Home() {
             onDeleteApplication={handleDeleteApplication}
             currentDraftName={selectedDraftName}
             currentAtsScore={analysis ? analysis.score : null}
+          />
+        ) : (
+          <ConsistencyChecker 
+            resumeText={getResumeTextForAudit()}
           />
         )}
       </main>
