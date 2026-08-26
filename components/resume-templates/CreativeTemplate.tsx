@@ -133,7 +133,7 @@ export default function CreativeTemplate({ data, customStyles }: ResumeTemplateP
                 </div>
                 <div style={s.entrySubtitle}>{e.organization} • {e.location}</div>
                 <ul style={s.bullets}>
-                  {e.bullets.map((b, j) => (
+                  {e.bullets.filter(b => b.trim() !== "").map((b, j) => (
                     <li key={j}>{b}</li>
                   ))}
                 </ul>
@@ -154,7 +154,7 @@ export default function CreativeTemplate({ data, customStyles }: ResumeTemplateP
                   <span style={{ fontSize: "0.85em", color: "#000000", fontWeight: 500 }}>{p.dates}</span>
                 </div>
                 <ul style={s.bullets}>
-                  {p.bullets.map((b, j) => (
+                  {p.bullets.filter(b => b.trim() !== "").map((b, j) => (
                     <li key={j}>{b}</li>
                   ))}
                 </ul>
@@ -168,20 +168,24 @@ export default function CreativeTemplate({ data, customStyles }: ResumeTemplateP
         <div style={s.grid}>
           <div style={s.sectionLabel}>Skills</div>
           <div style={s.sectionContent}>
-            {skills.map((g, i) => (
-              <div key={i} style={{ marginBottom: "8pt" }}>
-                {g.category && (
-                  <strong style={{ fontSize: "0.95em", display: "block", marginBottom: "2pt", color: "#000000" }}>
-                    {g.category}
-                  </strong>
-                )}
-                <div style={s.tagContainer}>
-                  {g.items.map((item, j) => (
-                    <span key={j} style={s.tag}>{item}</span>
-                  ))}
+            {skills.map((g, i) => {
+              const filteredItems = g.items.filter(item => item.trim() !== "");
+              if (filteredItems.length === 0) return null;
+              return (
+                <div key={i} style={{ marginBottom: "8pt" }}>
+                  {g.category && (
+                    <strong style={{ fontSize: "0.95em", display: "block", marginBottom: "2pt", color: "#000000" }}>
+                      {g.category}
+                    </strong>
+                  )}
+                  <div style={s.tagContainer}>
+                    {filteredItems.map((item, j) => (
+                      <span key={j} style={s.tag}>{item}</span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

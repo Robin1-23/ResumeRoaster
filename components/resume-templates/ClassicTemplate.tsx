@@ -6,6 +6,7 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
   const fSize = customStyles?.fontSize ? `${customStyles.fontSize}pt` : "var(--sheet-font-size, 10.5pt)";
   const lHeight = customStyles?.lineHeight || "var(--sheet-line-height, 1.45)";
   const accentColor = customStyles?.accentColor || "var(--sheet-accent-color, #ff5a1f)";
+  const paddingVal = customStyles?.pagePadding ? `${customStyles.pagePadding}mm` : "var(--sheet-padding, 16mm)";
 
   const s = {
     page: {
@@ -17,7 +18,8 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
       fontSize: fSize,
       lineHeight: lHeight,
       boxSizing: "border-box" as const,
-      fontWeight: 500
+      fontWeight: 500,
+      padding: paddingVal
     },
     name: {
       fontSize: "2em",
@@ -128,7 +130,7 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
                 <span>{e.location}</span>
               </div>
               <ul style={s.bullets}>
-                {e.bullets.map((b, j) => (
+                {e.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j}>{b}</li>
                 ))}
               </ul>
@@ -147,7 +149,7 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
                 <span>{p.dates}</span>
               </div>
               <ul style={s.bullets}>
-                {p.bullets.map((b, j) => (
+                {p.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j}>{b}</li>
                 ))}
               </ul>
@@ -169,7 +171,7 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
                 <span>{e.school}</span>
                 <span>{e.location}</span>
               </div>
-              {e.details?.map((d, j) => (
+              {e.details?.filter(d => d.trim() !== "").map((d, j) => (
                 <div key={j} style={{ fontSize: "0.9em" }}>{d}</div>
               ))}
             </div>
@@ -180,20 +182,24 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
       {skills.length > 0 && (
         <section>
           <div style={s.sectionTitle}>Skills</div>
-          {skills.map((g, i) => (
-            <div key={i} style={s.skillsRow}>
-              {g.category && <strong>{g.category}: </strong>}
-              {g.items.join(", ")}
-            </div>
-          ))}
+          {skills.map((g, i) => {
+            const filteredItems = g.items.filter(item => item.trim() !== "");
+            if (filteredItems.length === 0) return null;
+            return (
+              <div key={i} style={s.skillsRow}>
+                {g.category && <strong>{g.category}: </strong>}
+                {filteredItems.join(", ")}
+              </div>
+            );
+          })}
         </section>
       )}
 
-      {certifications && certifications.length > 0 && (
+      {certifications && certifications.filter(c => c.trim() !== "").length > 0 && (
         <section>
           <div style={s.sectionTitle}>Certifications</div>
           <ul style={s.bullets}>
-            {certifications.map((c, i) => (
+            {certifications.filter(c => c.trim() !== "").map((c, i) => (
               <li key={i}>{c}</li>
             ))}
           </ul>

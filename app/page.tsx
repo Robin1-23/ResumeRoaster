@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 
 const WarpText = dynamic(() => import("@/components/WarpText"), { ssr: false });
 const SplashCursor = dynamic(() => import("@/components/SplashCursor"), { ssr: false });
+const OutcomeTracker = dynamic(() => import("@/components/OutcomeTracker"), { ssr: false });
+import type { JobApplication } from "@/components/OutcomeTracker";
 import {
   TEMPLATE_DEFINITIONS,
   TEMPLATE_COMPONENTS,
@@ -173,6 +175,10 @@ export default function Home() {
   const [drafts, setDrafts] = useState<Record<string, ResumeData>>({});
   const [selectedDraftName, setSelectedDraftName] = useState<string>("Default Draft");
 
+  // Outcome Tracker States
+  const [activePageTab, setActivePageTab] = useState<"optimizer" | "tracker">("optimizer");
+  const [applications, setApplications] = useState<JobApplication[]>([]);
+
   // Dynamic scale state to fit Column 3 fully without scrolling on desktop
   const [sheetScale, setSheetScale] = useState<number>(1);
   const [sheetHeight, setSheetHeight] = useState<number>(1122);
@@ -216,7 +222,7 @@ export default function Home() {
     };
   }, [resumeData, templateId, makerTab, fontSize, lineHeight, pagePadding]);
 
-  // Load saved drafts on mount
+  // Load saved drafts and applications on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem("resumeroaster_drafts");
@@ -233,7 +239,38 @@ export default function Home() {
     } catch (e) {
       console.error("Failed to load drafts from localStorage", e);
     }
+
+    try {
+      const savedApps = localStorage.getItem("resumeroaster_applications");
+      if (savedApps) {
+        setApplications(JSON.parse(savedApps));
+      }
+    } catch (e) {
+      console.error("Failed to load applications from localStorage", e);
+    }
   }, []);
+
+  const handleAddApplication = (newApp: Omit<JobApplication, "id">) => {
+    const app: JobApplication = {
+      ...newApp,
+      id: Math.random().toString(36).substring(2, 9) + Date.now().toString(36)
+    };
+    const updated = [...applications, app];
+    setApplications(updated);
+    localStorage.setItem("resumeroaster_applications", JSON.stringify(updated));
+  };
+
+  const handleUpdateAppStatus = (id: string, status: JobApplication["status"]) => {
+    const updated = applications.map(a => a.id === id ? { ...a, status } : a);
+    setApplications(updated);
+    localStorage.setItem("resumeroaster_applications", JSON.stringify(updated));
+  };
+
+  const handleDeleteApplication = (id: string) => {
+    const updated = applications.filter(a => a.id !== id);
+    setApplications(updated);
+    localStorage.setItem("resumeroaster_applications", JSON.stringify(updated));
+  };
 
   const saveDraft = (name: string, dataToSave: ResumeData) => {
     const updated = { ...drafts, [name]: dataToSave };
@@ -701,9 +738,28 @@ export default function Home() {
           </p>
         </section>
 
-        {error && <div className="global-error-msg">{error}</div>}
+        <div className="page-navigation-tabs">
+          <button 
+            type="button" 
+            className={`page-nav-btn ${activePageTab === "optimizer" ? "active" : ""}`}
+            onClick={() => setActivePageTab("optimizer")}
+          >
+            🔥 Resume Optimizer
+          </button>
+          <button 
+            type="button" 
+            className={`page-nav-btn ${activePageTab === "tracker" ? "active" : ""}`}
+            onClick={() => setActivePageTab("tracker")}
+          >
+            📊 Outcome Tracker
+          </button>
+        </div>
 
-        <div className="optimizer-grid">
+        {activePageTab === "optimizer" ? (
+          <>
+            {error && <div className="global-error-msg">{error}</div>}
+
+            <div className="optimizer-grid">
           {/* COLUMN 1: Inputs & Original Text */}
           <div className="optimizer-column col-1">
             <h2 className="column-title">1. Input & Source</h2>
@@ -1551,6 +1607,18 @@ export default function Home() {
             )}
           </div>
         </div>
+        </>
+        ) : (
+          <OutcomeTracker 
+            drafts={drafts}
+            applications={applications}
+            onAddApplication={handleAddApplication}
+            onUpdateStatus={handleUpdateAppStatus}
+            onDeleteApplication={handleDeleteApplication}
+            currentDraftName={selectedDraftName}
+            currentAtsScore={analysis ? analysis.score : null}
+          />
+        )}
       </main>
 
       <section id="how-it-works" className="how-it-works">

@@ -165,16 +165,20 @@ export default function ModernTemplate({ data, customStyles }: ResumeTemplatePro
             <div>
               <div style={s.sideSectionTitle}>Skills</div>
               <div style={{ display: "flex", flexDirection: "column", gap: "8pt" }}>
-                {skills.map((g, i) => (
-                  <div key={i}>
-                    {g.category && (
-                      <div style={{ ...s.sideText, fontWeight: 700, marginBottom: "2pt", color: "#ffffff" }}>
-                        {g.category}
-                      </div>
-                    )}
-                    <div style={{ ...s.sideText, fontSize: "0.8em" }}>{g.items.join(", ")}</div>
-                  </div>
-                ))}
+                {skills.map((g, i) => {
+                  const filteredItems = g.items.filter(item => item.trim() !== "");
+                  if (filteredItems.length === 0) return null;
+                  return (
+                    <div key={i}>
+                      {g.category && (
+                        <div style={{ ...s.sideText, fontWeight: 700, marginBottom: "2pt", color: "#ffffff" }}>
+                          {g.category}
+                        </div>
+                      )}
+                      <div style={{ ...s.sideText, fontSize: "0.8em" }}>{filteredItems.join(", ")}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -194,11 +198,11 @@ export default function ModernTemplate({ data, customStyles }: ResumeTemplatePro
             </div>
           )}
 
-          {certifications && certifications.length > 0 && (
+          {certifications && certifications.filter(c => c.trim() !== "").length > 0 && (
             <div>
               <div style={s.sideSectionTitle}>Certifications</div>
               <div style={s.sideTextContainer}>
-                {certifications.map((c, i) => (
+                {certifications.filter(c => c.trim() !== "").map((c, i) => (
                   <div key={i} style={s.sideText}>{c}</div>
                 ))}
               </div>
@@ -229,7 +233,7 @@ export default function ModernTemplate({ data, customStyles }: ResumeTemplatePro
                   <span>{e.location}</span>
                 </div>
                 <ul style={s.bullets}>
-                  {e.bullets.map((b, j) => (
+                  {e.bullets.filter(b => b.trim() !== "").map((b, j) => (
                     <li key={j}>{b}</li>
                   ))}
                 </ul>
@@ -248,7 +252,7 @@ export default function ModernTemplate({ data, customStyles }: ResumeTemplatePro
                   <span>{p.dates}</span>
                 </div>
                 <ul style={s.bullets}>
-                  {p.bullets.map((b, j) => (
+                  {p.bullets.filter(b => b.trim() !== "").map((b, j) => (
                     <li key={j}>{b}</li>
                   ))}
                 </ul>

@@ -7,8 +7,13 @@ import { getCachedResponse, setCachedResponse, generateCacheKey, cleanAndTruncat
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
+  let resumeText = "";
+  let jd = "";
   try {
-    const { resumeText, jd, targetPageCount } = await req.json();
+    const body = await req.json();
+    resumeText = body.resumeText || "";
+    jd = body.jd || "";
+    const targetPageCount = body.targetPageCount;
 
     if (!resumeText) {
       return NextResponse.json({ error: "No resume text provided." }, { status: 400 });
@@ -119,8 +124,7 @@ Ensure the output is valid JSON. Return ONLY the raw JSON string. Do NOT wrap it
   } catch (err) {
     console.error("optimize route error, falling back to heuristics:", err);
     try {
-      const { resumeText, jd } = await req.json();
-      const fallback = heuristicOptimize(resumeText || "", jd || "");
+      const fallback = heuristicOptimize(resumeText, jd);
       return NextResponse.json({ resumeData: fallback });
     } catch {
       return NextResponse.json(

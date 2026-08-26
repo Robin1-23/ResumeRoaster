@@ -113,7 +113,7 @@ export default function CompactTemplate({ data, customStyles }: ResumeTemplatePr
               </div>
               {e.location && <div style={s.entrySub}><span>{e.location}</span><span /></div>}
               <ul style={s.bullets}>
-                {e.bullets.map((b, j) => (
+                {e.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j} style={s.bulletItem}>{b}</li>
                 ))}
               </ul>
@@ -132,7 +132,7 @@ export default function CompactTemplate({ data, customStyles }: ResumeTemplatePr
                 <span>{p.dates}</span>
               </div>
               <ul style={s.bullets}>
-                {p.bullets.map((b, j) => (
+                {p.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j} style={s.bulletItem}>{b}</li>
                 ))}
               </ul>
@@ -145,12 +145,16 @@ export default function CompactTemplate({ data, customStyles }: ResumeTemplatePr
         <section>
           <div style={s.sectionTitle}>Skills</div>
           <div style={s.skillsContainer}>
-            {skills.map((g, i) => (
-              <div key={i}>
-                {g.category && <strong>{g.category}: </strong>}
-                <span>{g.items.join(", ")}</span>
-              </div>
-            ))}
+            {skills.map((g, i) => {
+              const filteredItems = g.items.filter(item => item.trim() !== "");
+              if (filteredItems.length === 0) return null;
+              return (
+                <div key={i}>
+                  {g.category && <strong>{g.category}: </strong>}
+                  <span>{filteredItems.join(", ")}</span>
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
@@ -170,10 +174,10 @@ export default function CompactTemplate({ data, customStyles }: ResumeTemplatePr
         </section>
       )}
 
-      {certifications && certifications.length > 0 && (
+      {certifications && certifications.filter(c => c.trim() !== "").length > 0 && (
         <section>
           <div style={s.sectionTitle}>Certifications</div>
-          <div>{certifications.join(" · ")}</div>
+          <div>{certifications.filter(c => c.trim() !== "").join(" · ")}</div>
         </section>
       )}
     </div>

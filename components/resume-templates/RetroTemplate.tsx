@@ -126,7 +126,7 @@ export default function RetroTemplate({ data, customStyles }: ResumeTemplateProp
                 <span>{e.location}</span>
               </div>
               <ul style={s.bullets}>
-                {e.bullets.map((b, j) => (
+                {e.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j} style={s.bulletItem}>* {b}</li>
                 ))}
               </ul>
@@ -146,7 +146,7 @@ export default function RetroTemplate({ data, customStyles }: ResumeTemplateProp
                 <span>[{p.dates}]</span>
               </div>
               <ul style={s.bullets}>
-                {p.bullets.map((b, j) => (
+                {p.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j} style={s.bulletItem}>* {b}</li>
                 ))}
               </ul>
@@ -159,11 +159,15 @@ export default function RetroTemplate({ data, customStyles }: ResumeTemplateProp
       {skills.length > 0 && (
         <section>
           <div style={s.sectionTitle}>$ cat skills.json</div>
-          {skills.map((g, i) => (
-            <div key={i} style={{ margin: "4pt 0", color: "#cbd5e1" }}>
-              <span style={{ color: "#38bdf8" }}>"{g.category || "General"}":</span> [ {g.items.join(", ")} ]
-            </div>
-          ))}
+          {skills.map((g, i) => {
+            const filteredItems = g.items.filter(item => item.trim() !== "");
+            if (filteredItems.length === 0) return null;
+            return (
+              <div key={i} style={{ margin: "4pt 0", color: "#cbd5e1" }}>
+                <span style={{ color: "#38bdf8" }}>"{g.category || "General"}":</span> [ {filteredItems.join(", ")} ]
+              </div>
+            );
+          })}
           <div style={s.asciiLine}>{asciiDivider}</div>
         </section>
       )}

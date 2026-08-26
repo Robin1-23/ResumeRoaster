@@ -132,7 +132,7 @@ export default function ElegantTemplate({ data, customStyles }: ResumeTemplatePr
                 <span>{e.location}</span>
               </div>
               <ul style={s.bullets}>
-                {e.bullets.map((b, j) => (
+                {e.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j} style={s.bulletItem}>{b}</li>
                 ))}
               </ul>
@@ -151,7 +151,7 @@ export default function ElegantTemplate({ data, customStyles }: ResumeTemplatePr
                 <span>{p.dates}</span>
               </div>
               <ul style={s.bullets}>
-                {p.bullets.map((b, j) => (
+                {p.bullets.filter(b => b.trim() !== "").map((b, j) => (
                   <li key={j} style={s.bulletItem}>{b}</li>
                 ))}
               </ul>
@@ -164,12 +164,16 @@ export default function ElegantTemplate({ data, customStyles }: ResumeTemplatePr
         <section>
           <div style={s.sectionTitle}>Skills</div>
           <div style={s.skillsContainer}>
-            {skills.map((g, i) => (
-              <div key={i}>
-                <strong>{g.category ? `${g.category}: ` : ""}</strong>
-                <span>{g.items.join(", ")}</span>
-              </div>
-            ))}
+            {skills.map((g, i) => {
+              const filteredItems = g.items.filter(item => item.trim() !== "");
+              if (filteredItems.length === 0) return null;
+              return (
+                <div key={i}>
+                  <strong>{g.category ? `${g.category}: ` : ""}</strong>
+                  <span>{filteredItems.join(", ")}</span>
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
