@@ -2138,4 +2138,73 @@ footer {
   }
 }
 
+/* --- HONESTY ROAST / EVIDENCE GAP DETECTOR --- */
+
+.roast-card-wrapper {
+  background: rgba(196, 52, 31, 0.05);
+  border: 1px solid rgba(196, 52, 31, 0.15);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.roast-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.roast-title-badge {
+  background: var(--burnt);
+  color: var(--paper);
+  font-family: "Oswald", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 8px rgba(196, 52, 31, 0.4);
+}
+
+.roast-issues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.roast-issue-item {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--paper-dim);
+}
+
+.roast-skill-tag {
+  color: #ff8b5c;
+  font-family: monospace;
+  font-weight: bold;
+  background: rgba(255, 90, 31, 0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-right: 6px;
+  border: 1px solid rgba(255, 90, 31, 0.15);
+}
+
+.roast-pass-card {
+  background: rgba(122, 155, 87, 0.06);
+  border: 1px solid rgba(122, 155, 87, 0.15);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--paper-dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 

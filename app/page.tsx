@@ -8,6 +8,7 @@ const SplashCursor = dynamic(() => import("@/components/SplashCursor"), { ssr: f
 const OutcomeTracker = dynamic(() => import("@/components/OutcomeTracker"), { ssr: false });
 const ConsistencyChecker = dynamic(() => import("@/components/ConsistencyChecker"), { ssr: false });
 import type { JobApplication } from "@/components/OutcomeTracker";
+import { detectHonestyGaps, detectHonestyGapsRaw } from "@/lib/honesty-checker";
 import {
   TEMPLATE_DEFINITIONS,
   TEMPLATE_COMPONENTS,
@@ -1460,6 +1461,43 @@ export default function Home() {
                   </div>
                   <p className="score-desc">Targeting a score above 85 to pass automated filters.</p>
                 </div>
+
+                {/* Honesty Roast / Lie Detector section */}
+                {(() => {
+                  const honestyIssues = resumeData 
+                    ? detectHonestyGaps(resumeData) 
+                    : (analysis?.originalText ? detectHonestyGapsRaw(analysis.originalText) : []);
+
+                  if (honestyIssues.length > 0) {
+                    return (
+                      <div className="roast-card-wrapper">
+                        <div className="roast-card-header">
+                          <span className="roast-title-badge">🚨 Lie Detector Roast</span>
+                          <span style={{ fontSize: "11px", color: "var(--burnt)", fontWeight: "bold" }}>
+                            {honestyIssues.length} Evidence Gap{honestyIssues.length > 1 ? "s" : ""}
+                          </span>
+                        </div>
+                        <ul className="roast-issues-list">
+                          {honestyIssues.map((issue, idx) => (
+                            <li key={idx} className="roast-issue-item">
+                              <span className="roast-skill-tag">{issue.skill}</span>
+                              {issue.roast}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="roast-pass-card">
+                        <span>🛡️</span>
+                        <span>
+                          <strong>Honesty Audit Passed:</strong> All skills mentioned in your skills section are backed by evidence in your experience bullet points or projects. No bluffing detected.
+                        </span>
+                      </div>
+                    );
+                  }
+                })()}
 
                 {analysis.missingKeywords.length > 0 && (
                   <div className="diag-section">
