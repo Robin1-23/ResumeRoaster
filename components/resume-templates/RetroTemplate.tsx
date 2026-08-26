@@ -11,14 +11,17 @@ export default function RetroTemplate({ data, customStyles }: ResumeTemplateProp
   const s = {
     page: {
       width: "100%",
-      minHeight: "100%",
+      minHeight: "297mm",
+      height: "297mm",
       background: "transparent",
       color: accentColor,
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: fSize,
       lineHeight: lHeight,
       boxSizing: "border-box" as const,
-      padding: paddingVal
+      padding: paddingVal,
+      display: "flex",
+      flexDirection: "column" as const
     },
     header: {
       border: `2px solid ${accentColor}`,

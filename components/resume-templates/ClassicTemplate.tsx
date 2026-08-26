@@ -11,7 +11,8 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
   const s = {
     page: {
       width: "100%",
-      minHeight: "100%",
+      minHeight: "297mm",
+      height: "297mm",
       background: "transparent",
       color: "#000000",
       fontFamily: "'Georgia', 'Times New Roman', serif",
@@ -19,7 +20,9 @@ export default function ClassicTemplate({ data, customStyles }: ResumeTemplatePr
       lineHeight: lHeight,
       boxSizing: "border-box" as const,
       fontWeight: 500,
-      padding: paddingVal
+      padding: paddingVal,
+      display: "flex",
+      flexDirection: "column" as const
     },
     name: {
       fontSize: "2em",

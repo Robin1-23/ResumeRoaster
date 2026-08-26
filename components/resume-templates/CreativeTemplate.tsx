@@ -11,14 +11,17 @@ export default function CreativeTemplate({ data, customStyles }: ResumeTemplateP
   const s = {
     page: {
       width: "100%",
-      minHeight: "100%",
+      minHeight: "297mm",
+      height: "297mm",
       background: "transparent",
       color: "#000000",
       fontFamily: "'Inter', system-ui, sans-serif",
       fontSize: fSize,
       lineHeight: lHeight,
       boxSizing: "border-box" as const,
-      padding: paddingVal
+      padding: paddingVal,
+      display: "flex",
+      flexDirection: "column" as const
     },
     header: {
       display: "flex",

@@ -11,14 +11,17 @@ export default function CompactTemplate({ data, customStyles }: ResumeTemplatePr
   const s = {
     page: {
       width: "100%",
-      minHeight: "100%",
+      minHeight: "297mm",
+      height: "297mm",
       background: "transparent",
       color: "#000000",
       fontFamily: "'Helvetica Neue', Arial, sans-serif",
       fontSize: fSize,
       lineHeight: lHeight,
       boxSizing: "border-box" as const,
-      padding: paddingVal
+      padding: paddingVal,
+      display: "flex",
+      flexDirection: "column" as const
     },
     headRow: {
       display: "flex",
