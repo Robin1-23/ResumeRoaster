@@ -13,6 +13,7 @@ import type { JobApplication } from "@/components/OutcomeTracker";
 import { detectHonestyGaps, detectHonestyGapsRaw } from "@/lib/honesty-checker";
 import { evaluateSectionDiagnostics, evaluateSectionDiagnosticsRaw } from "@/lib/section-diagnostics";
 import { simulateRecruiterPanels } from "@/lib/recruiter-simulation";
+import { auditRedFlags } from "@/lib/red-flag-checker";
 import {
   TEMPLATE_DEFINITIONS,
   TEMPLATE_COMPONENTS,
@@ -190,6 +191,85 @@ export default function Home() {
 
   // Recruiter Simulation Active Tab
   const [selectedSimulatorId, setSelectedSimulatorId] = useState<string>("faang");
+
+  // Score comparison states
+  const [scoreDelta, setScoreDelta] = useState<{
+    change: number;
+    reason: string;
+  } | null>(null);
+  const [lastState, setLastState] = useState<{
+    score: number;
+    metricsCount: number;
+    keywordsCount: number;
+    flagsCount: number;
+  } | null>(null);
+
+  // Compare score changes when resumeData/analysis changes
+  useEffect(() => {
+    if (!analysis) {
+      setScoreDelta(null);
+      setLastState(null);
+      return;
+    }
+
+    const currentScore = analysis.score;
+    
+    let currentMetricsCount = 0;
+    const metricRegex = /(\d+%|\$\d+|\b\d+\s+(hours|users|pages|days|months|years|percent|percentile)\b)/i;
+    if (resumeData) {
+      resumeData.experience.forEach(exp => {
+        exp.bullets.forEach(b => {
+          if (metricRegex.test(b)) currentMetricsCount++;
+        });
+      });
+    }
+
+    const currentKeywordsCount = analysis.missingKeywords.length;
+
+    const currentFlags = auditRedFlags(resumeData, analysis.originalText);
+    const currentFlagsCount = currentFlags.filter(f => !f.passed).length;
+
+    if (lastState !== null) {
+      const scoreDiff = currentScore - lastState.score;
+      if (scoreDiff !== 0) {
+        let reasons: string[] = [];
+        
+        if (currentMetricsCount > lastState.metricsCount) {
+          reasons.push(`added metrics to ${currentMetricsCount - lastState.metricsCount} bullet(s)`);
+        } else if (currentMetricsCount < lastState.metricsCount) {
+          reasons.push(`removed metrics from ${lastState.metricsCount - currentMetricsCount} bullet(s)`);
+        }
+
+        if (currentKeywordsCount < lastState.keywordsCount) {
+          reasons.push(`integrated ${lastState.keywordsCount - currentKeywordsCount} missing target keyword(s)`);
+        } else if (currentKeywordsCount > lastState.keywordsCount) {
+          reasons.push(`removed ${currentKeywordsCount - lastState.keywordsCount} target keyword(s)`);
+        }
+
+        if (currentFlagsCount < lastState.flagsCount) {
+          reasons.push(`resolved ${lastState.flagsCount - currentFlagsCount} formatting red flag(s)`);
+        } else if (currentFlagsCount > lastState.flagsCount) {
+          reasons.push(`triggered ${currentFlagsCount - lastState.flagsCount} new formatting red flag(s)`);
+        }
+
+        let reasonStr = "";
+        if (reasons.length > 0) {
+          reasonStr = `${scoreDiff > 0 ? "+" : ""}${scoreDiff} points — ${reasons.join(" and ")}`;
+        } else {
+          reasonStr = `${scoreDiff > 0 ? "+" : ""}${scoreDiff} points — adjusted details & section formatting`;
+        }
+
+        setScoreDelta({ change: scoreDiff, reason: reasonStr });
+      }
+    }
+
+    setLastState({
+      score: currentScore,
+      metricsCount: currentMetricsCount,
+      keywordsCount: currentKeywordsCount,
+      flagsCount: currentFlagsCount
+    });
+  }, [resumeData, analysis?.score]);
 
   // Dynamic scale state to fit Column 3 fully without scrolling on desktop
   const [sheetScale, setSheetScale] = useState<number>(1);
@@ -1616,11 +1696,24 @@ export default function Home() {
             {analysis && !loading && (
               <div className="diagnostics-content">
                 <div className="score-widget">
-                  <div className="score-circle">
-                    <div className="score-val" style={{ color: scoreColor(analysis.score) }}>
-                      {analysis.score}
+                  <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                    <div className="score-circle">
+                      <div className="score-val" style={{ color: scoreColor(analysis.score) }}>
+                        {analysis.score}
+                      </div>
+                      <div className="score-label">ATS Score</div>
                     </div>
-                    <div className="score-label">ATS Score</div>
+                    
+                    {scoreDelta && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                        <span className={`score-delta-badge ${scoreDelta.change > 0 ? "positive" : scoreDelta.change < 0 ? "negative" : "neutral"}`}>
+                          {scoreDelta.change > 0 ? `▲ +${scoreDelta.change}` : scoreDelta.change < 0 ? `▼ ${scoreDelta.change}` : "■ 0"} points
+                        </span>
+                        <p style={{ margin: 0, fontSize: "11px", color: "var(--ash)", lineHeight: "1.35", maxWidth: "180px" }}>
+                          {scoreDelta.reason}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <p className="score-desc">Targeting a score above 85 to pass automated filters.</p>
                 </div>
@@ -1681,6 +1774,41 @@ export default function Home() {
                             <p className="cost-reason-text" style={{ margin: 0 }}>
                               {item.reason}
                             </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* 🚩 Red-Flag Checklist */}
+                {(() => {
+                  const flags = auditRedFlags(resumeData, analysis?.originalText || null);
+                  const failedFlags = flags.filter(f => !f.passed);
+
+                  return (
+                    <div className="redflag-panel-wrapper">
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                        <span style={{ fontSize: "11px", color: "var(--butter)", fontFamily: "Oswald", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.05em" }}>
+                          🚩 Red-Flag Checklist
+                        </span>
+                        <span style={{ fontSize: "11px", color: failedFlags.length > 0 ? "var(--burnt)" : "var(--herb)", fontWeight: "bold" }}>
+                          {failedFlags.length > 0 ? `${failedFlags.length} Flagged` : "All Passed"}
+                        </span>
+                      </div>
+
+                      <div className="flag-list">
+                        {flags.map((f) => (
+                          <div key={f.id} className={`flag-item ${f.passed ? "passed" : "flagged"}`}>
+                            <span className="flag-icon">
+                              {f.passed ? "💚" : "🚩"}
+                            </span>
+                            <div>
+                              <strong style={{ display: "block", fontSize: "12px", color: "var(--paper)", marginBottom: "2px" }}>
+                                {f.name}
+                              </strong>
+                              <span>{f.message}</span>
+                            </div>
                           </div>
                         ))}
                       </div>
