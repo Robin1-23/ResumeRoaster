@@ -182,6 +182,9 @@ export default function Home() {
   const [activePageTab, setActivePageTab] = useState<"optimizer" | "tracker" | "consistency">("optimizer");
   const [applications, setApplications] = useState<JobApplication[]>([]);
 
+  // JD alignment loading state
+  const [aligningBulletsKey, setAligningBulletsKey] = useState<string | null>(null);
+
   // Dynamic scale state to fit Column 3 fully without scrolling on desktop
   const [sheetScale, setSheetScale] = useState<number>(1);
   const [sheetHeight, setSheetHeight] = useState<number>(1122);
@@ -587,6 +590,50 @@ export default function Home() {
       console.error("Optimize request failed:", err);
       setError("Couldn't reach the server for optimization. Try again.");
       setOptimizing(false);
+    }
+  }
+
+  async function handleJdAlign(type: "experience" | "projects", idx: number, bullets: string[]) {
+    if (!resumeData) return;
+    const key = `${type}-${idx}`;
+    setAligningBulletsKey(key);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/optimize-bullets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bullets,
+          jd
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to align bullets to JD.");
+      }
+
+      if (Array.isArray(data.bullets)) {
+        if (type === "experience") {
+          updateExperience(idx, "bullets", data.bullets);
+        } else {
+          updateProject(idx, "bullets", data.bullets);
+        }
+      }
+    } catch (err: any) {
+      console.error("Failed to align bullets:", err);
+      setError(err.message || "Couldn't reach server. Falling back to local optimization.");
+      
+      const { rewriteBulletsRoleSpecificHeuristic } = await import("@/lib/bullet-rewriter");
+      const localBullets = rewriteBulletsRoleSpecificHeuristic(bullets, jd);
+      if (type === "experience") {
+        updateExperience(idx, "bullets", localBullets);
+      } else {
+        updateProject(idx, "bullets", localBullets);
+      }
+    } finally {
+      setAligningBulletsKey(null);
     }
   }
 
@@ -1154,24 +1201,43 @@ export default function Home() {
                             <div className="maker-field">
                               <label style={{ fontSize: "10px", color: "var(--ash)", textTransform: "uppercase", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
                                 <span>Achievements (One bullet per line)</span>
-                                <button
-                                  type="button"
-                                  style={{
-                                    background: "transparent",
-                                    border: "none",
-                                    color: "var(--flame)",
-                                    fontSize: "10px",
-                                    fontWeight: 700,
-                                    cursor: "pointer",
-                                    fontFamily: "'Courier Prime', monospace"
-                                  }}
-                                  onClick={() => {
-                                    const polished = localPolishBullets(exp.bullets);
-                                    updateExperience(i, "bullets", polished);
-                                  }}
-                                >
-                                  ✨ AI Polish (STAR)
-                                </button>
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                  <button
+                                    type="button"
+                                    style={{
+                                      background: "transparent",
+                                      border: "none",
+                                      color: "var(--ash)",
+                                      fontSize: "10px",
+                                      fontWeight: 700,
+                                      cursor: "pointer",
+                                      fontFamily: "'Courier Prime', monospace"
+                                    }}
+                                    onClick={() => {
+                                      const polished = localPolishBullets(exp.bullets);
+                                      updateExperience(i, "bullets", polished);
+                                    }}
+                                  >
+                                    ✨ STAR Polish
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={aligningBulletsKey === `experience-${i}`}
+                                    style={{
+                                      background: "transparent",
+                                      border: "none",
+                                      color: "var(--flame)",
+                                      fontSize: "10px",
+                                      fontWeight: 700,
+                                      cursor: "pointer",
+                                      fontFamily: "'Courier Prime', monospace",
+                                      opacity: aligningBulletsKey === `experience-${i}` ? 0.6 : 1
+                                    }}
+                                    onClick={() => handleJdAlign("experience", i, exp.bullets)}
+                                  >
+                                    {aligningBulletsKey === `experience-${i}` ? "🎯 Aligning..." : "🎯 Align to JD"}
+                                  </button>
+                                </div>
                               </label>
                               <textarea
                                 className="maker-textarea"
@@ -1219,24 +1285,43 @@ export default function Home() {
                             <div className="maker-field">
                               <label style={{ fontSize: "10px", color: "var(--ash)", textTransform: "uppercase", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
                                 <span>Details (One bullet per line)</span>
-                                <button
-                                  type="button"
-                                  style={{
-                                    background: "transparent",
-                                    border: "none",
-                                    color: "var(--flame)",
-                                    fontSize: "10px",
-                                    fontWeight: 700,
-                                    cursor: "pointer",
-                                    fontFamily: "'Courier Prime', monospace"
-                                  }}
-                                  onClick={() => {
-                                    const polished = localPolishBullets(proj.bullets);
-                                    updateProject(i, "bullets", polished);
-                                  }}
-                                >
-                                  ✨ AI Polish (STAR)
-                                </button>
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                  <button
+                                    type="button"
+                                    style={{
+                                      background: "transparent",
+                                      border: "none",
+                                      color: "var(--ash)",
+                                      fontSize: "10px",
+                                      fontWeight: 700,
+                                      cursor: "pointer",
+                                      fontFamily: "'Courier Prime', monospace"
+                                    }}
+                                    onClick={() => {
+                                      const polished = localPolishBullets(proj.bullets);
+                                      updateProject(i, "bullets", polished);
+                                    }}
+                                  >
+                                    ✨ STAR Polish
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={aligningBulletsKey === `projects-${i}`}
+                                    style={{
+                                      background: "transparent",
+                                      border: "none",
+                                      color: "var(--flame)",
+                                      fontSize: "10px",
+                                      fontWeight: 700,
+                                      cursor: "pointer",
+                                      fontFamily: "'Courier Prime', monospace",
+                                      opacity: aligningBulletsKey === `projects-${i}` ? 0.6 : 1
+                                    }}
+                                    onClick={() => handleJdAlign("projects", i, proj.bullets)}
+                                  >
+                                    {aligningBulletsKey === `projects-${i}` ? "🎯 Aligning..." : "🎯 Align to JD"}
+                                  </button>
+                                </div>
                               </label>
                               <textarea
                                 className="maker-textarea"
