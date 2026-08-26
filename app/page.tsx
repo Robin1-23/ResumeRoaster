@@ -7,6 +7,7 @@ const WarpText = dynamic(() => import("@/components/WarpText"), { ssr: false });
 const SplashCursor = dynamic(() => import("@/components/SplashCursor"), { ssr: false });
 const OutcomeTracker = dynamic(() => import("@/components/OutcomeTracker"), { ssr: false });
 const ConsistencyChecker = dynamic(() => import("@/components/ConsistencyChecker"), { ssr: false });
+const HumanReviewWidget = dynamic(() => import("@/components/HumanReviewWidget"), { ssr: false });
 import type { JobApplication } from "@/components/OutcomeTracker";
 import { detectHonestyGaps, detectHonestyGapsRaw } from "@/lib/honesty-checker";
 import {
@@ -1498,6 +1499,12 @@ export default function Home() {
                     );
                   }
                 })()}
+
+                {/* Human Review Vibe Check */}
+                <HumanReviewWidget 
+                  resumeText={getResumeTextForAudit()}
+                  atsScore={analysis.score}
+                />
 
                 {analysis.missingKeywords.length > 0 && (
                   <div className="diag-section">
