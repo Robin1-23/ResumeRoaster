@@ -11,6 +11,7 @@ const HumanReviewWidget = dynamic(() => import("@/components/HumanReviewWidget")
 import type { JobApplication } from "@/components/OutcomeTracker";
 import { detectHonestyGaps, detectHonestyGapsRaw } from "@/lib/honesty-checker";
 import { evaluateSectionDiagnostics, evaluateSectionDiagnosticsRaw } from "@/lib/section-diagnostics";
+import { simulateRecruiterPanels } from "@/lib/recruiter-simulation";
 import {
   TEMPLATE_DEFINITIONS,
   TEMPLATE_COMPONENTS,
@@ -185,6 +186,9 @@ export default function Home() {
 
   // JD alignment loading state
   const [aligningBulletsKey, setAligningBulletsKey] = useState<string | null>(null);
+
+  // Recruiter Simulation Active Tab
+  const [selectedSimulatorId, setSelectedSimulatorId] = useState<string>("faang");
 
   // Dynamic scale state to fit Column 3 fully without scrolling on desktop
   const [sheetScale, setSheetScale] = useState<number>(1);
@@ -1608,6 +1612,70 @@ export default function Home() {
                           </div>
                         ))}
                       </div>
+                    </div>
+                  );
+                })()}
+
+                {/* 👥 Screening Simulation Room */}
+                {(() => {
+                  const simulatedRecruiters = simulateRecruiterPanels(resumeData, analysis?.originalText || null);
+                  const activeRecruiter = simulatedRecruiters.find(r => r.id === selectedSimulatorId) || simulatedRecruiters[0];
+
+                  return (
+                    <div className="sim-panel-wrapper">
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                        <span style={{ fontSize: "11px", color: "var(--butter)", fontFamily: "Oswald", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.05em" }}>
+                          👥 Recruiter Screening Room
+                        </span>
+                        <span style={{ fontSize: "10px", color: "var(--ash)" }}>
+                          Click avatar to view inner monologue
+                        </span>
+                      </div>
+
+                      <div className="sim-grid">
+                        {simulatedRecruiters.map((recruiter) => {
+                          const isActive = recruiter.id === selectedSimulatorId;
+                          const scoreColorVal = recruiter.score >= 80 ? "var(--herb)" : recruiter.score >= 55 ? "var(--butter)" : "var(--burnt)";
+                          const verdictClass = recruiter.verdict === "Approved" ? "verdict-approved" 
+                            : recruiter.verdict === "Borderline" ? "verdict-borderline" 
+                            : "verdict-rejected";
+                          return (
+                            <div 
+                              key={recruiter.id}
+                              className={`sim-card ${isActive ? "active" : ""}`}
+                              onClick={() => setSelectedSimulatorId(recruiter.id)}
+                            >
+                              <div className="sim-avatar-circle">
+                                {recruiter.avatar}
+                              </div>
+                              <span style={{ fontSize: "10px", color: "var(--paper)", fontWeight: "bold", textAlign: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%" }}>
+                                {recruiter.name.split(" ")[0]}
+                              </span>
+                              <span className="sim-score-badge" style={{ color: scoreColorVal }}>
+                                {recruiter.score}%
+                              </span>
+                              <span className={`sim-verdict-text ${verdictClass}`}>
+                                {recruiter.verdict}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {activeRecruiter && (
+                        <div className="sim-monologue-box">
+                          <div className="sim-meta-header">
+                            {activeRecruiter.name}
+                            <span className="sim-meta-role">({activeRecruiter.role})</span>
+                          </div>
+                          <div style={{ fontSize: "10.5px", color: "var(--flame)", fontFamily: "monospace", margin: "2px 0 6px 0" }}>
+                            🎯 Bias: {activeRecruiter.bias}
+                          </div>
+                          <div className="sim-monologue-text">
+                            {activeRecruiter.innerMonologue}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}

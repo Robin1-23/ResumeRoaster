@@ -2347,4 +2347,125 @@ footer {
   color: var(--paper-dim);
 }
 
+/* --- MULTI-PERSONA RECRUITER SIMULATION PANEL --- */
 
+.sim-panel-wrapper {
+  background: var(--char-2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sim-card {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1.5px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sim-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.sim-card.active {
+  border-color: var(--flame);
+  background: rgba(255, 90, 31, 0.05);
+  box-shadow: 0 4px 12px rgba(255, 90, 31, 0.05);
+}
+
+.sim-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  font-family: "Oswald", sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.sim-card.active .sim-avatar-circle {
+  background: var(--flame);
+  color: var(--char);
+  border-color: var(--flame);
+}
+
+.sim-score-badge {
+  font-size: 12px;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.sim-verdict-text {
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.verdict-approved {
+  color: var(--herb);
+  background: rgba(122, 155, 87, 0.1);
+}
+
+.verdict-borderline {
+  color: var(--butter);
+  background: rgba(244, 185, 66, 0.1);
+}
+
+.verdict-rejected {
+  color: var(--burnt);
+  background: rgba(196, 52, 31, 0.1);
+}
+
+.sim-monologue-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.sim-meta-header {
+  font-size: 11.5px;
+  color: var(--paper);
+  font-weight: bold;
+}
+
+.sim-meta-role {
+  font-size: 10px;
+  color: var(--ash);
+  margin-left: 6px;
+  font-weight: normal;
+}
+
+.sim-monologue-text {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--paper-dim);
+  font-style: italic;
+}
