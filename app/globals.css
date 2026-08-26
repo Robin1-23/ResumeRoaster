@@ -2506,3 +2506,61 @@ footer {
   background: #a92d1b !important;
   border-color: #a92d1b !important;
 }
+
+/* --- SKILL DECAY AND MARKET TRENDS STYLING --- */
+
+.decay-panel-wrapper {
+  background: var(--char-2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.decay-skill-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  background: rgba(196, 52, 31, 0.03);
+  border: 1px solid rgba(196, 52, 31, 0.1);
+  margin-bottom: 8px;
+}
+
+.emerging-skill-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  background: rgba(122, 155, 87, 0.03);
+  border: 1px solid rgba(122, 155, 87, 0.1);
+  margin-bottom: 8px;
+}
+
+.risk-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: "Oswald", sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.risk-badge.high {
+  background: var(--burnt);
+  color: var(--paper);
+  box-shadow: 0 0 8px rgba(196, 52, 31, 0.3);
+}
+
+.risk-badge.medium {
+  background: var(--butter);
+  color: var(--char);
+}
+
+.risk-badge.low {
+  background: var(--herb);
+  color: var(--paper);
+}

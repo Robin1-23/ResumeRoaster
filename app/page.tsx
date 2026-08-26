@@ -234,6 +234,70 @@ export default function Home() {
     };
   }, [resumeData, templateId, makerTab, fontSize, lineHeight, pagePadding]);
 
+  // Skill Decay State
+  const [skillDecayData, setSkillDecayData] = useState<{
+    role: string;
+    decayingSkills: Array<{ skill: string; description: string }>;
+    emergingSkills: Array<{ skill: string; description: string }>;
+    marketRisk: "Low" | "Medium" | "High";
+    scrapedListingsCount: number;
+  } | null>(null);
+
+  // Fetch Skill Decay and Market trends dynamically
+  useEffect(() => {
+    if (!analysis && !resumeData) {
+      setSkillDecayData(null);
+      return;
+    }
+
+    const targetRole = resumeData?.contact.title || file?.name.replace(".pdf", "").replace(/_/g, " ").replace(/-/g, " ") || "Software Engineer";
+    
+    let activeSkills: string[] = [];
+    if (resumeData) {
+      activeSkills = resumeData.skills.flatMap(s => s.items);
+    } else if (analysis) {
+      const rawText = analysis.originalText.replace(/\r/g, "");
+      const skillsHeaderRegex = /(?:technical\s+)?(?:skills|technologies|expertise|proficiencies|tools)\b/gi;
+      let match;
+      let skillsStartIndex = -1;
+      while ((match = skillsHeaderRegex.exec(rawText)) !== null) {
+        skillsStartIndex = match.index + match[0].length;
+      }
+      if (skillsStartIndex !== -1) {
+        const nextSectionRegex = /\n\s*(?:experience|projects|education|employment|work|history)\b/i;
+        const remainingText = rawText.substring(skillsStartIndex);
+        const nextMatch = nextSectionRegex.exec(remainingText);
+        const skillsSection = nextMatch ? remainingText.substring(0, nextMatch.index) : remainingText;
+        activeSkills = skillsSection
+          .split(/[,\n•*|●■▪◦○♦✓\t]/)
+          .map(s => s.trim())
+          .filter(s => s.length > 1 && s.length < 30);
+      }
+    }
+
+    const triggerDecayCheck = async () => {
+      try {
+        const res = await fetch("/api/skill-decay", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            role: targetRole,
+            skills: activeSkills
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setSkillDecayData(data);
+        }
+      } catch (err) {
+        console.error("Skill decay check failed:", err);
+      }
+    };
+
+    const timeout = setTimeout(triggerDecayCheck, 1200);
+    return () => clearTimeout(timeout);
+  }, [resumeData, analysis]);
+
   // Load saved drafts and applications on mount
   useEffect(() => {
     try {
@@ -1687,6 +1751,67 @@ export default function Home() {
                     </div>
                   );
                 })()}
+
+                {/* 📉 12-Month Skill Decay & Market Trends */}
+                {skillDecayData && (
+                  <div className="decay-panel-wrapper">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                      <span style={{ fontSize: "11px", color: "var(--butter)", fontFamily: "Oswald", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.05em" }}>
+                        📉 12-Month Skill Decay warning
+                      </span>
+                      <span className={`risk-badge ${skillDecayData.marketRisk.toLowerCase()}`}>
+                        Risk: {skillDecayData.marketRisk}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: "11.5px", color: "var(--ash)", marginBottom: "10px", lineHeight: "1.4" }}>
+                      Analyzing target postings for <strong>{skillDecayData.role}</strong>. 
+                      {skillDecayData.scrapedListingsCount > 0 ? " (Live greenhouse/lever indexing pipeline active)" : ""}
+                    </div>
+
+                    {/* Decaying skills section */}
+                    {skillDecayData.decayingSkills.length > 0 ? (
+                      <div style={{ marginBottom: "14px" }}>
+                        <div style={{ fontSize: "10px", color: "var(--burnt)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "6px", fontFamily: "monospace" }}>
+                          ⚠️ listed skills declining in market demand:
+                        </div>
+                        {skillDecayData.decayingSkills.map((item, idx) => (
+                          <div key={idx} className="decay-skill-item">
+                            <span style={{ fontSize: "12px", fontWeight: "bold", color: "var(--paper)" }}>
+                              {item.skill.toUpperCase()}
+                            </span>
+                            <span style={{ fontSize: "11px", color: "var(--paper-dim)", lineHeight: "1.35" }}>
+                              {item.description}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: "11px", color: "var(--herb)", background: "rgba(122, 155, 87, 0.05)", border: "1px solid rgba(122, 155, 87, 0.1)", borderRadius: "4px", padding: "8px", marginBottom: "14px" }}>
+                        ✅ None of your listed skills are trending down in modern job listings.
+                      </div>
+                    )}
+
+                    {/* Emerging skills section */}
+                    {skillDecayData.emergingSkills.length > 0 && (
+                      <div>
+                        <div style={{ fontSize: "10px", color: "var(--butter)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "6px", fontFamily: "monospace" }}>
+                          💡 Emerging target keywords missing on your resume:
+                        </div>
+                        {skillDecayData.emergingSkills.map((item, idx) => (
+                          <div key={idx} className="emerging-skill-item">
+                            <span style={{ fontSize: "12px", fontWeight: "bold", color: "var(--paper)" }}>
+                              {item.skill.toUpperCase()}
+                            </span>
+                            <span style={{ fontSize: "11px", color: "var(--paper-dim)", lineHeight: "1.35" }}>
+                              {item.description}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Honesty Roast / Lie Detector section */}
                 {(() => {
