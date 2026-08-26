@@ -8,6 +8,7 @@ const SplashCursor = dynamic(() => import("@/components/SplashCursor"), { ssr: f
 const OutcomeTracker = dynamic(() => import("@/components/OutcomeTracker"), { ssr: false });
 const ConsistencyChecker = dynamic(() => import("@/components/ConsistencyChecker"), { ssr: false });
 const HumanReviewWidget = dynamic(() => import("@/components/HumanReviewWidget"), { ssr: false });
+const GrillMeSession = dynamic(() => import("@/components/GrillMeSession"), { ssr: false });
 import type { JobApplication } from "@/components/OutcomeTracker";
 import { detectHonestyGaps, detectHonestyGapsRaw } from "@/lib/honesty-checker";
 import { evaluateSectionDiagnostics, evaluateSectionDiagnosticsRaw } from "@/lib/section-diagnostics";
@@ -181,7 +182,7 @@ export default function Home() {
   const [selectedDraftName, setSelectedDraftName] = useState<string>("Default Draft");
 
   // Outcome Tracker States
-  const [activePageTab, setActivePageTab] = useState<"optimizer" | "tracker" | "consistency">("optimizer");
+  const [activePageTab, setActivePageTab] = useState<"optimizer" | "tracker" | "consistency" | "grill">("optimizer");
   const [applications, setApplications] = useState<JobApplication[]>([]);
 
   // JD alignment loading state
@@ -827,6 +828,13 @@ export default function Home() {
             onClick={() => setActivePageTab("consistency")}
           >
             🔍 Consistency Scorer
+          </button>
+          <button 
+            type="button" 
+            className={`page-nav-btn ${activePageTab === "grill" ? "active" : ""}`}
+            onClick={() => setActivePageTab("grill")}
+          >
+            🔥 Grill Me
           </button>
         </div>
 
@@ -1901,9 +1909,14 @@ export default function Home() {
             currentDraftName={selectedDraftName}
             currentAtsScore={analysis ? analysis.score : null}
           />
-        ) : (
+        ) : activePageTab === "consistency" ? (
           <ConsistencyChecker 
             resumeText={getResumeTextForAudit()}
+          />
+        ) : (
+          <GrillMeSession 
+            resumeText={getResumeTextForAudit()}
+            resumeData={resumeData}
           />
         )}
       </main>

@@ -2469,3 +2469,40 @@ footer {
   color: var(--paper-dim);
   font-style: italic;
 }
+
+/* --- INTERACTIVE GRILLING SESSION PREP STYLING --- */
+
+.grill-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.recording-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--burnt);
+  border-radius: 50%;
+  animation: blinkRed 1s infinite alternate;
+}
+
+@keyframes blinkRed {
+  from {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.25);
+    box-shadow: 0 0 6px var(--burnt);
+  }
+}
+
+.mic-btn:hover {
+  background: rgba(255, 90, 31, 0.1) !important;
+  border-color: var(--flame) !important;
+}
+
+.mic-btn.active:hover {
+  background: #a92d1b !important;
+  border-color: #a92d1b !important;
+}
